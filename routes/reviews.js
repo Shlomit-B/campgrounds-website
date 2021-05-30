@@ -9,6 +9,8 @@ const reviews = require('../controllers/reviews');
 
 router.post('/', isLoggedIn, validateReview, catchAsync(reviews.createReview));
 
-router.delete('/:reviewId', isLoggedIn, isReviewAuthor, catchAsync(reviews.deleteReview));
+router.route('/:reviewId')
+    .delete(isLoggedIn, isReviewAuthor, catchAsync(reviews.deleteReview))
+    .put(catchAsync(reviews.editReview));
 
 module.exports = router;

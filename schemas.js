@@ -28,7 +28,19 @@ module.exports.campgroundSchema = Joi.object({
         title: Joi.string().required().escapeHTML(),
         price: Joi.number().required().min(0),
         description: Joi.string().required().escapeHTML(),
-        location: Joi.string().required().escapeHTML()
+        location: Joi.string().required().escapeHTML(),
+        freeParking: Joi.boolean().invalid(false),
+        freeInternet: Joi.boolean().invalid(false),
+
+        lockersStorage: Joi.boolean().invalid(false),
+        childrenActivities: Joi.boolean().invalid(false),
+        outdoorEquipment: Joi.boolean().invalid(false),
+        petsAllowed: Joi.boolean().invalid(false),
+        laundry: Joi.boolean().invalid(false),
+        Pool: Joi.boolean().invalid(false),
+        tennisCourt: Joi.boolean().invalid(false),
+        barLounge: Joi.boolean().invalid(false),
+        canoeing: Joi.boolean().invalid(false)
     }).required(),
     deleteImages: Joi.array()
 });

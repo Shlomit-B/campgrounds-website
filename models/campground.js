@@ -39,7 +39,52 @@ const campgroundSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Review'
         }
-    ]
+    ],
+    // Property amenities:
+    freeParking: {
+        type: Boolean,
+        default: false
+    },
+    freeInternet: {
+        type: Boolean,
+        default: false
+    },
+    lockersStorage: {
+        type: Boolean,
+        default: false
+    },
+    childrenActivities: {
+        type: Boolean,
+        default: false
+    },
+    outdoorEquipment: {
+        type: Boolean,
+        default: false
+    },
+    petsAllowed: {
+        type: Boolean,
+        default: false
+    },
+    laundry: {
+        type: Boolean,
+        default: false
+    },
+    Pool: {
+        type: Boolean,
+        default: false
+    },
+    tennisCourt: {
+        type: Boolean,
+        default: false
+    },
+    barLounge: {
+        type: Boolean,
+        default: false
+    },
+    canoeing: {
+        type: Boolean,
+        default: false
+    }
 }, opts);
 
 campgroundSchema.virtual('properties.popUpMarkup').get(function () {

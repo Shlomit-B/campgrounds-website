@@ -1,37 +1,200 @@
 <% layout('layouts/boilerplate') %>
 
+ <div class="container mb-3">
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <form autocomplete="off" action="/campgrounds/search" method="POST">
+                <div class="input-group justify-content-center">
+                    <div class="autocomplete" style="width:300px;">
+                        <input id="search-input" type="search" name="title" placeholder="Search Campground By Name" aria-label="Search">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div id="cluster-map"></div>
 
-    <h1>All Campgrounds:</h1>
-    <!-- <div>
-        <a href="/campgrounds/new">Add new campground</a>
-    </div> -->
-    <% for (let campground of campgrounds) { %>
-        <div class="card mb-3">
-            <div class="row">
-                <div class="col-md-4">
-                    <% if (campground.images.length) { %> 
-                    <img src="<%= campground.images[0].url %>" alt="" class="img-fluid">
-                    <% } else { %> 
-                    <img src="https://res.cloudinary.com/dwphntwhr/image/upload/v1610642217/YelpCamp/a9xarpwmdjavyzejhc9c.jpg" alt="" class="img-fluid">
-                    <% } %>
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title"><%= campground.title %></h5>
-                        <p class="card-text"><%= campground.description %></p>
-                        <p class="card-text">
-                            <small class="text-muted"><%= campground.location %></small>    
-                        </p>
-                        <a class="btn btn-primary" href="/campgrounds/<%=campground._id%>">View <%= campground.title %> </a>
-                    </div>
+<h1>All Campgrounds:</h1>
+<% for (let campground of campgrounds) { %>
+    <div class="card mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <% if (campground.images.length) { %> 
+                <img src="<%= campground.images[0].url %>" alt="" class="img-fluid">
+                <% } else { %> 
+                <img src="https://res.cloudinary.com/dwphntwhr/image/upload/v1610642217/YelpCamp/a9xarpwmdjavyzejhc9c.jpg" alt="" class="img-fluid">
+                <% } %>
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title"><%= campground.title %></h5>
+                    <p class="card-text"><%= campground.description %></p>
+                    <p class="card-text">
+                        <small class="text-muted"><%= campground.location %></small>    
+                    </p>
+                    <a class="btn btn-primary" href="/campgrounds/<%=campground._id%>">View <%= campground.title %> </a>
                 </div>
             </div>
         </div>
-    <% } %>
+    </div>
+<% } %>
 
 <script>
+    
     const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
     const campgrounds = {features: <%- JSON.stringify(campgrounds) %> }
+
+    const names = [];
+    for (var i = 0; i < campgrounds.features.length; i++) {
+        names.push(campgrounds.features[i].title);
+    }
+
+    autocomplete(document.getElementById("search-input"), names);
+
+    /* The autocomplete function takes two arguments,
+    the text field element and an array of possible autocompleted values*/
+    function autocomplete(input, arr) {
+        var currentFocus;
+
+        input.addEventListener("input", function(e) {
+            var a, b, i, val = this.value;
+            // close any already open lists of autocompleted values
+            closeAllLists();
+            if (!val) { return false;}
+            currentFocus = -1;
+
+            // create a DIV element that will contain the items (values)
+            a = document.createElement("DIV");
+            a.setAttribute("id", this.id + "autocomplete-list");
+            a.setAttribute("class", "autocomplete-items");
+            // append the DIV element as a child of the autocomplete container
+            this.parentNode.appendChild(a);
+
+            // for each item in the array...
+            for (i = 0; i < arr.length; i++) {
+                // check if the item starts with the same letters as the text field value
+                if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                    // create a DIV element for each matching element
+                    b = document.createElement("DIV");
+                    // make the matching letters bold
+                    b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                    b.innerHTML += arr[i].substr(val.length);
+                    // insert an input field that will hold the current array item's value
+                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+
+                    // execute a function when someone clicks on the item value (DIV element)
+                    b.addEventListener("click", function(e) {
+                        // insert the value for the autocomplete text field
+                        input.value = this.getElementsByTagName("input")[0].value;
+                        // close the list of autocompleted values, or any other open lists of autocompleted values:
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                }
+            }
+        });
+
+        /*execute a function presses a key on the keyboard:*/
+        input.addEventListener("keydown", function(e) {
+            var x = document.getElementById(this.id + "autocomplete-list");
+            if (x) x = x.getElementsByTagName("div");
+
+            /*If the arrow DOWN key is pressed, increase the currentFocus variable:*/
+            if (e.keyCode == 40) {
+                currentFocus++;
+                /*and make the current item more visible:*/
+                addActive(x);
+            }
+
+            /*If the arrow UP key is pressed, decrease the currentFocus variable:*/
+            else if (e.keyCode == 38) { //up
+                currentFocus--;
+                /*and make the current item more visible:*/
+                addActive(x);
+            }
+
+            /*If the ENTER key is pressed, prevent the form from being submitted,*/
+            else if (e.keyCode == 13) {
+                // e.preventDefault();
+                if (currentFocus > -1) {
+                /*and simulate a click on the "active" item:*/
+                    if (x) x[currentFocus].click();
+                }
+            }
+        });
+
+        /*a function to classify an item as "active":*/
+        function addActive(x) {
+            if (!x) return false;
+            /*start by removing the "active" class on all items:*/
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            /*add class "autocomplete-active":*/
+            x[currentFocus].classList.add("autocomplete-active");
+        }
+
+        /*a function to remove the "active" class from all autocomplete items:*/
+        function removeActive(x) {
+            for (var i = 0; i < x.length; i++) {
+                x[i].classList.remove("autocomplete-active");
+            }
+        }
+
+        /*close all autocomplete lists in the document, except the one passed as an argument:*/
+        function closeAllLists(elmnt) {
+            var x = document.getElementsByClassName("autocomplete-items");
+            for (var i = 0; i < x.length; i++) {
+                if (elmnt != x[i] && elmnt != input) {
+                    x[i].parentNode.removeChild(x[i]);
+                }
+            }
+        }
+
+        /*execute a function when someone clicks in the document:*/
+        document.addEventListener("click", function (e) {
+            closeAllLists(e.target);
+        });
+}
+
+    // const searchInput = document.getElementById('search-input');
+    // const searchWrapper = document.querySelector('.wrapper');
+    // const searchResults = document.querySelector('.results');
+
+    // console.log("searchInput = ", searchInput);
+
+    // searchInput.addEventListener('keyup', () => {
+    //     let results = [];
+    //     let input = searchInput.value;
+    //     if (input.length) {
+    //         results = names.filter((item) => {
+    //             return item.toLowerCase().includes(input.toLowerCase());
+    //         });
+    //     }
+
+    //     renderResults(results);
+    // });
+
+    // function renderResults(results) {
+    //     if (!results.length) {
+    //         return searchWrapper.classList.remove('show');
+    //     }
+
+    //     const list = results
+    //         .map((item) => {
+    //             return `<li>${item}</li>`;
+    //         })
+    //         .join('');
+        
+    //     searchWrapper.classList.add('show');
+    //     searchResults.innerHTML = `<ul>${list}</ul>`;
+    // }
 </script>
 <script src="/javascripts/clusterMap.js"></script>
