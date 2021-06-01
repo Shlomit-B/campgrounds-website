@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config();
+}
+
 const mongoose = require('mongoose');
 const Campground = require('../models/campground');
 const cities = require('./cities');
@@ -47,7 +51,18 @@ const seedDB = async () => {
                 }
               ],
             description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit quo, minima, blanditiis expedita, consequatur nihil impedit iusto dolorem officiis dolorum fugit consequuntur a quaerat inventore esse reiciendis iste veniam doloremque?',
-            price
+            price,
+            freeParking: Math.random() < 0.5,
+            freeInternet: Math.random() < 0.5,
+            lockersStorage: Math.random() < 0.5,
+            childrenActivities: Math.random() < 0.5,
+            outdoorEquipment: Math.random() < 0.5,
+            petsAllowed: Math.random() < 0.5,
+            laundry: Math.random() < 0.5,
+            Pool: Math.random() < 0.5,
+            tennisCourt: Math.random() < 0.5,
+            barLounge: Math.random() < 0.5,
+            canoeing: Math.random() < 0.5
         })
         await camp.save();
     }

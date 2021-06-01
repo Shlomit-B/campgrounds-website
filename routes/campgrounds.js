@@ -24,5 +24,3 @@ router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(campgrounds.renderEditF
 router.post('/search', catchAsync(campgrounds.searchCampground));
 
 module.exports = router;
-
-//  /campgrounds/search

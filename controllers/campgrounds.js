@@ -6,10 +6,6 @@ const geocoder = mbxGeocoding({ accessToken:  mapBoxTokem });
 
 module.exports.index = async (req, res) => {
     const campgrounds = await Campground.find({});
-    // for (var i = 0; i < campgrounds.length; i++) {
-    //     console.log(campgrounds[i].title);
-    // }
-    // console.log(campgrounds);
     res.render('campgrounds/index', { campgrounds});
 };
 
@@ -22,16 +18,13 @@ module.exports.createCampground = async (req, res, next) => {
         query: req.body.campground.location,
         limit: 1
       }).send();
-    // console.log("req.body.campground = ", req.body.campground);
     const campground = new Campground(req.body.campground);
     campground.geometry = geoData.body.features[0].geometry;
     campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     campground.author = req.user._id;
     await campground.save();
-    // console.log("campground = ", campground);
     req.flash('success', 'Successfully made a new campground!');
     res.redirect(`/campgrounds/${campground._id}`);
-    // res.redirect('/campgrounds/new')
 };
 
 module.exports.searchCampground = async(req, res, next) => {
@@ -50,6 +43,7 @@ module.exports.searchCampground = async(req, res, next) => {
         }
     }).populate('author');
     
+    // Campground was not found
     if (!campground || campground.title != title) {
         req.flash('error', 'Campground was not found');
         return res.redirect('/campgrounds');
@@ -61,7 +55,6 @@ module.exports.searchCampground = async(req, res, next) => {
     }
     averageReview = averageReview / campground.reviews.length;
 
-    // res.render('campgrounds/show', { campground });
     res.render('campgrounds/show', { campground, averageReview });
 };
 
@@ -83,9 +76,7 @@ module.exports.showCampground = async (req, res) => {
     for (let review of campground.reviews) {
         averageReview += review.rating;
     }
-    // console.log("campground.reviews.length = " + campground.reviews.length);
     averageReview = averageReview / campground.reviews.length;
-    // console.log("averageReview = " + averageReview);
     res.render('campgrounds/show', { campground, averageReview });
 };
 
@@ -101,7 +92,6 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updateCampgroud = async (req, res) => {
     const { id } = req.params;
-    // console.log("deleteImages = ", req.body.deleteImages);
     const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground });
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
     campground.images.push(...imgs);
