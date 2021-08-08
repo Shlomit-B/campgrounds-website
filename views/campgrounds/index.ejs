@@ -1,6 +1,6 @@
 <% layout('layouts/boilerplate') %>
 
- <div class="container mb-3">
+ <!-- <div class="container mb-3">
     <div class="row justify-content-center">
         <div class="col-8">
             <form autocomplete="off" action="/campgrounds/search" method="POST">
@@ -17,11 +17,21 @@
             </form>
         </div>
     </div>
-</div>
+</div> -->
 
-<div id="cluster-map"></div>
+<div class="mb-3" id="cluster-map"></div>
 
-<h1>All Campgrounds:</h1>
+<form action="/campgrounds/index" method="POST">
+    <div class="mb-3">
+        <label for="sort-select">Sort By:</label>
+        <select name="sort" id="sort-select" onchange="this.form.submit()">
+            <option id="select-title" value="title">Name</option>
+            <option id="select-price" value="price">Price</option>
+        </select>
+    </div>
+</form>
+
+<!-- <h1>All Campgrounds:</h1> -->
 <% for (let campground of campgrounds) { %>
     <div class="card mb-3">
         <div class="row">
@@ -49,120 +59,92 @@
 <script>
     
     const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
-    const campgrounds = {features: <%- JSON.stringify(campgrounds) %> }
+    const campgrounds = {features: <%- JSON.stringify(campgrounds) %> };
 
-    const names = [];
-    for (var i = 0; i < campgrounds.features.length; i++) {
-        names.push(campgrounds.features[i].title);
+    const sortBy = <%- JSON.stringify(sortBy) %>;
+    if (!sortBy.localeCompare("price")) {
+        document.getElementById("select-price").selected = true;
+        
+    }
+    else {
+        document.getElementById("select-title").selected = true;
     }
 
-    autocomplete(document.getElementById("search-input"), names);
+    // sortCampgrounds(document.getElementById('sort-select'))
+    // function sortCampgrounds(input) {
 
-    /* The autocomplete function takes two arguments,
-    the text field element and an array of possible autocompleted values*/
-    function autocomplete(input, arr) {
-        var currentFocus;
+    //     input.addEventListener("change", function (e) {
+    //         const sortBy = input.value;
+    //         const parentDiv = document.getElementById('all-campgrounds');
 
-        input.addEventListener("input", function(e) {
-            var parentDiv, childDiv, i, value = this.value;
-            // close any already open lists of autocompleted values
-            closeAllLists();
-            if (!value) { return false;}
-            currentFocus = -1;
+    //         if (!sortBy.localeCompare("price")) {
+    //             campgrounds.features.sort((camp1, camp2) => camp1[sortBy] - camp2[sortBy]);
+    //         }
+    //         else {
+    //             campgrounds.features.sort(compareByTitle);
+    //         }
 
-            // create a DIV element that will contain the items (values)
-            parentDiv = document.createElement("DIV");
-            parentDiv.setAttribute("id", this.id + "autocomplete-list");
-            parentDiv.setAttribute("class", "autocomplete-items");
-            // append the DIV element as a child of the autocomplete container
-            this.parentNode.appendChild(parentDiv);
+    //         parentDiv.innerHTML = '';
+    //         for (let campground of campgrounds.features) {
+    //             var card = document.createElement('div');
+    //             card.classList.add("card", "mb-3");
+    //             parentDiv.appendChild(card);
+    //             var row = document.createElement('div');
+    //             row.classList.add("row");
+    //             card.appendChild(row);
+    //             var col4 = document.createElement('div');
+    //             col4.classList.add("col-md-4");
+    //             row.appendChild(col4);
+    //             var img = document.createElement('img');
+    //             img.classList.add("img-fluid");
+    //             if (campground.images.length) {
+    //                 img.src = campground.images[0].url
+    //             }
+    //             else {
+    //                 img.src = "https://res.cloudinary.com/dwphntwhr/image/upload/v1610642217/YelpCamp/a9xarpwmdjavyzejhc9c.jpg";
+    //             }
+    //             col4.appendChild(img);
+    //             var col8 = document.createElement('div');
+    //             col8.classList.add("col-md-8");
+    //             row.appendChild(col8);
+    //             var cardBody = document.createElement('div');
+    //             cardBody.classList.add("card-body");
+    //             col8.appendChild(cardBody);
+    //             var title = document.createElement('h5');
+    //             title.classList.add("card-title");
+    //             title.innerHTML = campground.title;
+    //             cardBody.appendChild(title);
+    //             var description = document.createElement('p');
+    //             description.classList.add("card-text");
+    //             description.innerHTML = campground.description;
+    //             cardBody.appendChild(description);
+    //             var location = document.createElement('p');
+    //             location.classList.add("card-text");
+    //             cardBody.appendChild(location);
+    //             var l = document.createElement('small');
+    //             l.classList.add("text-muted");
+    //             l.innerHTML = campground.locaiton;
+    //             location.appendChild(l);
+    //             var button = document.createElement('a');
+    //             button.classList.add("btn", "btn-primary");
+    //             button.href = "/campgrounds/" + campground._id;
+    //             button.innerHTML = "View " + campground.title;
+    //             cardBody.appendChild(button);
+    //         }
+    //     });
 
-            // for each item in the array...
-            for (i = 0; i < arr.length; i++) {
-                // check if the item starts with the same letters as the text field value
-                if (arr[i].substr(0, value.length).toUpperCase() == value.toUpperCase()) {
-                    // create a DIV element for each matching element
-                    childDiv = document.createElement("DIV");
-                    // make the matching letters bold
-                    childDiv.innerHTML = "<strong>" + arr[i].substr(0, value.length) + "</strong>";
-                    childDiv.innerHTML += arr[i].substr(value.length);
-                    // insert an input field that will hold the current array item's value
-                    childDiv.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-
-                    // execute a function when someone clicks on the item value (DIV element)
-                    childDiv.addEventListener("click", function(e) {
-                        // insert the value for the autocomplete text field
-                        input.value = this.getElementsByTagName("input")[0].value;
-                        // close the list of autocompleted values, or any other open lists of autocompleted values:
-                        closeAllLists();
-                    });
-                    parentDiv.appendChild(childDiv);
-                }
-            }
-        });
-
-        /*execute a function presses a key on the keyboard:*/
-        input.addEventListener("keydown", function(e) {
-            var x = document.getElementById(this.id + "autocomplete-list");
-            if (x) x = x.getElementsByTagName("div");
-
-            /*If the arrow DOWN key is pressed, increase the currentFocus variable:*/
-            if (e.keyCode == 40) {
-                currentFocus++;
-                /*and make the current item more visible:*/
-                addActive(x);
-            }
-
-            /*If the arrow UP key is pressed, decrease the currentFocus variable:*/
-            else if (e.keyCode == 38) { //up
-                currentFocus--;
-                /*and make the current item more visible:*/
-                addActive(x);
-            }
-
-            /*If the ENTER key is pressed, prevent the form from being submitted,*/
-            else if (e.keyCode == 13) {
-                // e.preventDefault();
-                if (currentFocus > -1) {
-                /*and simulate a click on the "active" item:*/
-                    if (x) x[currentFocus].click();
-                }
-            }
-        });
-
-        /*a function to classify an item as "active":*/
-        function addActive(x) {
-            if (!x) return false;
-            /*start by removing the "active" class on all items:*/
-            removeActive(x);
-            if (currentFocus >= x.length) currentFocus = 0;
-            if (currentFocus < 0) currentFocus = (x.length - 1);
-            /*add class "autocomplete-active":*/
-            x[currentFocus].classList.add("autocomplete-active");
-        }
-
-        /*a function to remove the "active" class from all autocomplete items:*/
-        function removeActive(x) {
-            for (var i = 0; i < x.length; i++) {
-                x[i].classList.remove("autocomplete-active");
-            }
-        }
-
-        /*close all autocomplete lists in the document, except the one passed as an argument:*/
-        function closeAllLists(elmnt) {
-            var x = document.getElementsByClassName("autocomplete-items");
-            for (var i = 0; i < x.length; i++) {
-                if (elmnt != x[i] && elmnt != input) {
-                    x[i].parentNode.removeChild(x[i]);
-                }
-            }
-        }
-
-        /*execute a function when someone clicks in the document:*/
-        document.addEventListener("click", function (e) {
-            closeAllLists(e.target);
-        });
-}
+        // function compareByTitle( camp1, camp2 ) {
+        //     if ( camp1.title < camp2.title ){
+        //     return -1;
+        //     }
+        //     if ( camp1.title > camp2.title ){
+        //     return 1;
+        //     }
+        //     return 0;
+        // }  
+        // 
+    // }
+    
 
     // const searchInput = document.getElementById('search-input');
     // const searchWrapper = document.querySelector('.wrapper');

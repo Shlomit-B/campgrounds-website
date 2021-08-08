@@ -1,7 +1,6 @@
 <% layout('layouts/boilerplate') %>
 <link rel="stylesheet" href="/stylesheets/stars.css">
-
-<i class="fas fa-parking"></i>
+<link rel="stylesheet" href="/stylesheets/show.css">
 
     <div class="row">
         <div class="col-6">
@@ -37,41 +36,42 @@
                     <li class="list-group-item">Submitted by <%= campground.author.username %> </li>
                     <li class="list-group-item">$<%= campground.price %>/night</li>
                     <li class="list-group-item">
-                        <p><b>Property amenities:</b></p>
+                        <ul class="list-group list-group-flush" id="amenities"><b>Property amenities:</b>
                         <% if (campground.freeParking) { %> 
-                            <!-- <i class="fas fa-parking"></i> -->
-                            <p>Free Internet</p>
+                            <li class="list-group-item"><i class="fas fa-parking"></i>&nbsp;&nbsp;Free Parking</li>
                         <% } %> 
                         <% if (campground.freeInternet) { %> 
-                            <p>Free Internet</p>
+                            <li class="list-group-item"><i class="fas fa-wifi"></i>&nbsp;&nbsp;Free Internet</li>
                         <% } %>
                         <% if (campground.lockersStorage) { %> 
-                            <p>Lockers / storage</p>
+                            <li class="list-group-item"><i class="fas fa-lock"></i>&nbsp;&nbsp;Lockers / storage</li>
                         <% } %> 
                         <% if (campground.childrenActivities) { %> 
-                            <p>Children Activities (Kid / Family Friendly)</p>
+                            <li class="list-group-item"><i class="fas fa-child"></i>&nbsp;&nbsp;Children Activities (Kid / Family Friendly)</li>
                         <% } %> 
-                        <% if (campground.outdoorEquipment) { %> 
-                            <p>Kids' outdoor play equipment</p>
-                        <% } %> 
+                        <!-- <% if (campground.outdoorEquipment) { %> 
+                            <li class="list-group-item">Kids' outdoor play equipment</p>
+                        <% } %>  -->
                         <% if (campground.petsAllowed) { %>
-                            <p>Pets Allowed ( Dog / Pet Friendly )</p>
+                            <li class="list-group-item"><i class="fas fa-paw"></i>&nbsp;&nbsp;Pets Allowed ( Dog / Pet Friendly )</li>
                         <% } %> 
                         <% if (campground.laundry) { %>
-                            <p>Self-serve laundry</p>
+                            <li class="list-group-item"><i class="fas fa-socks"></i>&nbsp;&nbsp;Self-serve laundry</li>
                         <% } %> 
                         <% if (campground.Pool) { %> 
-                            <p>Pool</p>
+                            <li class="list-group-item"><i class="fas fa-swimmer"></i>&nbsp;&nbsp;Pool</li>
                         <% } %> 
                         <% if (campground.tennisCourt) { %> 
-                            <p>Tennis court</p>
+                            <li class="list-group-item"><i class="fas fa-table-tennis"></i>&nbsp;&nbsp;Tennis court</li>
                         <% } %> 
                         <% if (campground.barLounge) { %> 
-                            <p>Bar / lounge</p>
+                            <li class="list-group-item"><i class="fas fa-glass-martini"></i>&nbsp;&nbsp;Bar / lounge</li>
+                            <!-- <p><i class="fas fa-couch"></i></p> -->
                         <% } %> 
                         <% if (campground.canoeing) { %> 
-                            <p>Canoeing</p>
+                            <li class="list-group-item"><i class="fas fa-ship"></i>&nbsp;&nbsp;Canoeing</li>
                         <% } %>
+                    </ul>
                     </li>
                 </ul>
                 <% if (currentUser && campground.author.equals(currentUser._id)) { %>

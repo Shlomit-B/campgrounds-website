@@ -1,0 +1,218 @@
+<% layout('layouts/boilerplate') %>
+    <link rel="stylesheet" href="/stylesheets/search.css">
+
+    <!-- Search by name -->
+    <div id="image1" class="d-flex justify-content-center mb-3">
+        <!-- <div id="image1" class="d-flex flex-column justify-content-center mb-3"></div> -->
+        <div class="form align-self-center mb-3">
+            <form autocomplete="off" action="/campgrounds/searchByName" method="GET">
+                <div class="input-group search-line">
+                    <input class="form-control" id="search-input" type="search" name="title" placeholder="Search Campground By Name"
+                        aria-label="Search">
+                    <button type="submit" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Search by properties -->
+    <div id="image2" class="d-flex justify-content-center mb-3 container">
+        <!-- <div id="image2" class="d-flex flex-column justify-content-center mb-3 container"> -->
+        <div class="form align-self-center">
+            <form autocomplete="off" action="/campgrounds/searchByProperties" method="GET">
+                <div class="input-group mb-3 search-line">
+                    <span class="input-group-text" id="basic-addon1">$</span>
+                    <input type="number" class="form-control" id="max-price" name="price"
+                        placeholder="Max price per night" aria-label="max-price" aria-describedby="max-price">
+                    <button type="submit" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <input class="form-check-input" type="checkbox" value="true" id="freeParking"
+                            name="camp[freeParking]">
+                        <label class="form-check-label" for="freeParking">Free Parking</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-check-input" type="checkbox" value="true" id="freeInternet"
+                            name="camp[freeInternet]">
+                        <label class="form-check-label" for="freeInternet">Free Internet</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-check-input" type="checkbox" value="true" id="lockersStorage"
+                            name="camp[lockersStorage]">
+                        <label class="form-check-label" for="lockersStorage">Lockers Storage</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <input class="form-check-input" type="checkbox" value="true" id="childrenActivities"
+                            name="camp[childrenActivities]">
+                        <label class="form-check-label" for="childrenActivities">Children Activities</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-check-input" type="checkbox" value="true" id="outdoorEquipment"
+                            name="camp[outdoorEquipment]">
+                        <label class="form-check-label" for="outdoorEquipment">Outdoor Equipment</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-check-input" type="checkbox" value="true" id="petsAllowed"
+                            name="camp[petsAllowed]">
+                        <label class="form-check-label" for="petsAllowed">Pets Allowed</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <input class="form-check-input" type="checkbox" value="true" id="laundry" name="camp[laundry]">
+                        <label class="form-check-label" for="laundry">Laundry</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-check-input" type="checkbox" value="true" id="Pool" name="camp[Pool]">
+                        <label class="form-check-label" for="Pool">Pool</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-check-input" type="checkbox" value="true" id="tennisCourt"
+                            name="camp[tennisCourt]">
+                        <label class="form-check-label" for="tennisCourt">Tennis Court</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <input class="form-check-input" type="checkbox" value="true" id="barLounge"
+                            name="camp[barLounge]">
+                        <label class="form-check-label" for="barLounge">Bar Lounge</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-check-input" type="checkbox" value="true" id="canoeing"
+                            name="camp[canoeing]">
+                        <label class="form-check-label" for="canoeing">Canoeing</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const campgrounds = { features: <%- JSON.stringify(campgrounds) %> };
+        const names = [];
+        for (var i = 0; i < campgrounds.features.length; i++) {
+            names.push(campgrounds.features[i].title);
+        }
+    
+        autocomplete(document.getElementById("search-input"), names);
+
+        /* The autocomplete function takes two arguments,
+        the text field element and an array of possible autocompleted values*/
+        function autocomplete(input, arr) {
+            var currentFocus;
+
+            input.addEventListener("input", function (e) {
+                var parentDiv, childDiv, i, value = this.value;
+                // close any already open lists of autocompleted values
+                closeAllLists();
+                if (!value) { return false; }
+                currentFocus = -1;
+
+                // create a DIV element that will contain the items (values)
+                parentDiv = document.createElement("DIV");
+                parentDiv.setAttribute("id", this.id + "autocomplete-list");
+                parentDiv.setAttribute("class", "autocomplete-items");
+                // append the DIV element as a child of the autocomplete container
+                this.parentNode.appendChild(parentDiv);
+
+                // for each item in the array...
+                for (i = 0; i < arr.length; i++) {
+                    // check if the item starts with the same letters as the text field value
+                    if (arr[i].substr(0, value.length).toUpperCase() == value.toUpperCase()) {
+                        // create a DIV element for each matching element
+                        childDiv = document.createElement("DIV");
+                        // make the matching letters bold
+                        childDiv.innerHTML = "<strong>" + arr[i].substr(0, value.length) + "</strong>";
+                        childDiv.innerHTML += arr[i].substr(value.length);
+                        // insert an input field that will hold the current array item's value
+                        childDiv.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+
+                        // execute a function when someone clicks on the item value (DIV element)
+                        childDiv.addEventListener("click", function (e) {
+                            // insert the value for the autocomplete text field
+                            input.value = this.getElementsByTagName("input")[0].value;
+                            // close the list of autocompleted values, or any other open lists of autocompleted values:
+                            closeAllLists();
+                        });
+                        parentDiv.appendChild(childDiv);
+                    }
+                }
+            });
+
+            /*execute a function presses a key on the keyboard:*/
+            input.addEventListener("keydown", function (e) {
+                var x = document.getElementById(this.id + "autocomplete-list");
+                if (x) x = x.getElementsByTagName("div");
+
+                /*If the arrow DOWN key is pressed, increase the currentFocus variable:*/
+                if (e.keyCode == 40) {
+                    currentFocus++;
+                    /*and make the current item more visible:*/
+                    addActive(x);
+                }
+
+                /*If the arrow UP key is pressed, decrease the currentFocus variable:*/
+                else if (e.keyCode == 38) { //up
+                    currentFocus--;
+                    /*and make the current item more visible:*/
+                    addActive(x);
+                }
+
+                /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                else if (e.keyCode == 13) {
+                    // e.preventDefault();
+                    if (currentFocus > -1) {
+                        /*and simulate a click on the "active" item:*/
+                        if (x) x[currentFocus].click();
+                    }
+                }
+            });
+
+            /*a function to classify an item as "active":*/
+            function addActive(x) {
+                if (!x) return false;
+                /*start by removing the "active" class on all items:*/
+                removeActive(x);
+                if (currentFocus >= x.length) currentFocus = 0;
+                if (currentFocus < 0) currentFocus = (x.length - 1);
+                /*add class "autocomplete-active":*/
+                x[currentFocus].classList.add("autocomplete-active");
+            }
+
+            /*a function to remove the "active" class from all autocomplete items:*/
+            function removeActive(x) {
+                for (var i = 0; i < x.length; i++) {
+                    x[i].classList.remove("autocomplete-active");
+                }
+            }
+
+            /*close all autocomplete lists in the document, except the one passed as an argument:*/
+            function closeAllLists(elmnt) {
+                var x = document.getElementsByClassName("autocomplete-items");
+                for (var i = 0; i < x.length; i++) {
+                    if (elmnt != x[i] && elmnt != input) {
+                        x[i].parentNode.removeChild(x[i]);
+                    }
+                }
+            }
+
+            /*execute a function when someone clicks in the document:*/
+            document.addEventListener("click", function (e) {
+                closeAllLists(e.target);
+            });
+        }
+    </script>

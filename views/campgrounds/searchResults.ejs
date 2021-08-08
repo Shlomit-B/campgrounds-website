@@ -1,0 +1,152 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="row">
+    <div class="col-3">
+        <div id="search-line" class="align-self-center">
+            <form autocomplete="off" action="/campgrounds/searchByProperties" method="GET">
+                <label class="form-label" for="max-price">max price:</label>
+                <div class="input-group mb-3">
+                    <!-- <div class="col-10"> -->
+                        <span class="input-group-text" id="basic-addon1">$</span>
+                        <input type="number" class="form-control" id="max-price" name="price"
+                            placeholder="max price per night" aria-label="max-price" aria-describedby="max-price">
+                    <!-- </div> -->
+                    <!-- <div class="col-2"> -->
+                        <button type="submit" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-search" viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                            </svg>
+                        </button>
+                    <!-- </div> -->
+                </div>
+                <div>
+                    <input class="form-check-input" type="checkbox" value="true" id="freeParking"
+                        name="camp[freeParking]">
+                    <label class="form-check-label" for="freeParking">Free Parking</label>
+                </div>
+                <div>
+                    <input class="form-check-input" type="checkbox" value="true" id="freeInternet"
+                        name="camp[freeInternet]">
+                    <label class="form-check-label" for="freeInternet">Free Internet</label>
+                </div>
+                <div>
+                    <input class="form-check-input" type="checkbox" value="true" id="lockersStorage"
+                        name="camp[lockersStorage]">
+                    <label class="form-check-label" for="lockersStorage">Lockers Storage</label>
+                </div>
+                <div>
+                    <input class="form-check-input" type="checkbox" value="true" id="childrenActivities"
+                            name="camp[childrenActivities]">
+                    <label class="form-check-label" for="childrenActivities">Children Activities</label>
+                </div>
+                <div>
+                    <input class="form-check-input" type="checkbox" value="true" id="outdoorEquipment"
+                        name="camp[outdoorEquipment]">
+                    <label class="form-check-label" for="outdoorEquipment">Outdoor Equipment</label>
+                </div>
+                <div>
+                    <input class="form-check-input" type="checkbox" value="true" id="petsAllowed"
+                        name="camp[petsAllowed]">
+                    <label class="form-check-label" for="petsAllowed">Pets Allowed</label>
+                </div>
+                <div>
+                    <input class="form-check-input" type="checkbox" value="true" id="laundry" 
+                        name="camp[laundry]">
+                    <label class="form-check-label" for="laundry">Laundry</label>
+                </div>
+                <div>
+                    <input class="form-check-input" type="checkbox" value="true" id="Pool" 
+                        name="camp[Pool]">
+                    <label class="form-check-label" for="Pool">Pool</label>
+                </div>
+                <div>
+                    <input class="form-check-input" type="checkbox" value="true" id="tennisCourt"
+                        name="camp[tennisCourt]">
+                    <label class="form-check-label" for="tennisCourt">Tennis Court</label>
+                </div>
+                <div>
+                    <input class="form-check-input" type="checkbox" value="true" id="barLounge"
+                        name="camp[barLounge]">
+                    <label class="form-check-label" for="barLounge">Bar Lounge</label>
+                </div>
+                <div>
+                    <input class="form-check-input" type="checkbox" value="true" id="canoeing"
+                        name="camp[canoeing]">
+                    <label class="form-check-label" for="canoeing">Canoeing</label>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="col-9">
+        <div class="mb-3" id="cluster-map"></div>
+
+        <form action="/campgrounds/index" method="POST">
+            <div class="mb-3">
+                <label for="sort-select">Sort By:</label>
+                <select name="sort" id="sort-select" onchange="this.form.submit()">
+                    <option id="select-title" value="title">Name</option>
+                    <option id="select-price" value="price">Price</option>
+                </select>
+            </div>
+        </form>
+
+        <!-- <h1>All Campgrounds results:</h1> -->
+        <% for (let campground of campgrounds) { %>
+            <div class="card mb-3">
+                <div class="row">
+                    <div class="col-md-4">
+                        <% if (campground.images.length) { %> 
+                        <img src="<%= campground.images[0].url %>" alt="" class="img-fluid">
+                        <% } else { %> 
+                        <img src="https://res.cloudinary.com/dwphntwhr/image/upload/v1610642217/YelpCamp/a9xarpwmdjavyzejhc9c.jpg" alt="" class="img-fluid">
+                        <% } %>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= campground.title %></h5>
+                            <p class="card-text"><%= campground.description %></p>
+                            <p class="card-text">
+                                <small class="text-muted"><%= campground.location %></small>    
+                            </p>
+                            <a class="btn btn-primary" href="/campgrounds/<%=campground._id%>">View <%= campground.title %> </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
+    </div>
+</div>
+
+<script>
+    const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
+    const campgrounds = {features: <%- JSON.stringify(campgrounds) %> };
+    const params = <%- JSON.stringify(camp) %>;
+
+    let properties = [ 'freeParking', 'freeInternet', 'lockersStorage', 'childrenActivities', 
+        'outdoorEquipment', 'petsAllowed', 'laundry', 'Pool', 'tennisCourt', 'barLounge', 'canoeing' ];
+    
+    for (let i = 0; i < properties.length; i++) {
+        if (params[properties[i]]) {
+            document.getElementById(properties[i]).checked = true;
+        }
+    }
+
+    const sortBy = <%- JSON.stringify(sortBy) %>;
+    if (!sortBy.localeCompare("price")) {
+        document.getElementById("select-price").selected = true;
+        
+    }
+    else {
+        document.getElementById("select-title").selected = true;
+    }
+    
+    const price = <%- JSON.stringify(price, (k, v) => v == undefined ? null : v) %>;
+    if (price) {
+        document.getElementById("max-price").value = price;
+    }
+</script>
+<script src="/javascripts/clusterMap.js"></script>

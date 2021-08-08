@@ -100,8 +100,11 @@ const connectSrcUrls = [
     "https://a.tiles.mapbox.com/",
     "https://b.tiles.mapbox.com/",
     "https://events.mapbox.com/",
+    "https://ka-f.fontawesome.com/",
 ];
-const fontSrcUrls = [];
+const fontSrcUrls = [
+    "https://ka-f.fontawesome.com/",
+];
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
@@ -117,6 +120,7 @@ app.use(
                 "data:",
                 "https://res.cloudinary.com/dwphntwhr/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
                 "https://images.unsplash.com/",
+                "https://source.unsplash.com/"
             ],
             fontSrc: ["'self'", ...fontSrcUrls],
         },

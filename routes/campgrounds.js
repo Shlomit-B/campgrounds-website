@@ -12,6 +12,16 @@ router.route('/')
     .get(catchAsync(campgrounds.index))
     .post(isLoggedIn, upload.array('image'), validateCampground, catchAsync(campgrounds.createCampground));
 
+router.post('/index', catchAsync(campgrounds.index));
+
+router.get('/searchByProperties', catchAsync(campgrounds.searchCampgroundByProperties));
+
+router.route('/search')
+    .get(catchAsync(campgrounds.renderSearchForm))
+
+router.route('/searchByName')
+    .get(catchAsync(campgrounds.searchCampgroundByName));
+
 router.get('/new', isLoggedIn, campgrounds.renderNewForm);
 
 router.route('/:id')
@@ -21,6 +31,5 @@ router.route('/:id')
 
 router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(campgrounds.renderEditForm));
 
-router.post('/search', catchAsync(campgrounds.searchCampground));
 
 module.exports = router;
